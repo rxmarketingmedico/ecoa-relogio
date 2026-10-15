@@ -1,0 +1,19 @@
+name: Relógio da fila
+
+# Aciona a fila de mensagens agendadas da Ecoa a cada 5 minutos. O endereço e o segredo ficam em "Secrets" do repositório.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Acionar a fila
+        env:
+          RELOGIO_URL: ${{ secrets.RELOGIO_URL }}
+          RELOGIO_SECRET: ${{ secrets.RELOGIO_SECRET }}
+        run: |
+          curl -sS -m 90 -o /dev/null -w "http=%{http_code}\n" -H "Authorization: Bearer $RELOGIO_SECRET" "$RELOGIO_URL"
